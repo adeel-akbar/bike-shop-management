@@ -24,6 +24,20 @@ class BikeResponse(BikeCreate):
 
     model_config = ConfigDict(from_attributes = True)
 
+class BikeUpdate(BaseModel):
+    company: str | None = None
+    model: str | None = None
+    model_year: int | None = None
+    registration_no: str | None = None
+    engine_no: str | None = None
+    chassis_no: str | None = None
+    purchase_date: datetime | None = None
+    purchase_price: int | None = Field(default = None, gt=0)
+    seller_name: str | None = None
+    seller_phone_no: str | None = None
+    seller_cnic: str | None = None
+    notes: str | None = None
+
 class BikeSale(BaseModel):
     buyer_name: str
     buyer_phone: str | None = None
