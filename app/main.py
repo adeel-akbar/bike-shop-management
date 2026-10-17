@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .routers import bikes
+from .routers import auth, bikes
 
 app = FastAPI()
 
@@ -9,3 +9,4 @@ def root():
     return {"message": "Hello World"}
 
 app.include_router(bikes.router)
+app.include_router(auth.router)

@@ -4,10 +4,12 @@ from sqlalchemy.orm import Session
 
 from app import models, schemas
 from app.database import get_db
+from app.oauth2 import get_current_user
 
 router = APIRouter(
     prefix = "/bikes",
-    tags = ["bikes"]
+    tags = ["bikes"],
+    dependencies = [Depends(get_current_user)]
 )
 
 @router.post("/", response_model = schemas.BikeResponse, status_code=status.HTTP_201_CREATED)
