@@ -37,3 +37,6 @@ class Sales(Base):
                             server_default = func.now(), nullable = False)
     sale_price: Mapped[int] = mapped_column(nullable = False)
     bike_info: Mapped["Bikes"] = relationship(back_populates = "sale_info")
+    @property
+    def profit(self) -> int:
+        return self.sale_price - self.bike_info.purchase_price 

@@ -46,6 +46,8 @@ class BikeSale(BaseModel):
     sale_date: datetime | None = None
     sale_price: int = Field(gt=0)
 
+    model_config = ConfigDict(from_attributes = True)
+
 class BikeInfoForSale(BaseModel):
     company: str
     model: str
@@ -59,3 +61,6 @@ class BikeSaleResponse(BikeSale):
     bike_info: BikeInfoForSale
 
     model_config = ConfigDict(from_attributes = True)
+
+class BikeSaleAdminResponse(BikeSaleResponse):
+    profit: int

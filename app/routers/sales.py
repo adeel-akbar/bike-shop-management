@@ -49,7 +49,7 @@ def get_all_sales(db: Session = Depends(get_db)):  # noqa: B008
         models.Sales.bike_info))).scalars().all()
     return all_sales
 
-@router.get("/{sale_id}", response_model = schemas.BikeSaleResponse)
+@router.get("/{sale_id}", response_model = schemas.BikeSaleAdminResponse)
 def get_one_sale(sale_id: int, db: Session = Depends(get_db)):  # noqa: B008
     sale = db.execute(select(models.Sales).where(models.Sales.id == sale_id)).scalar_one_or_none()
     if sale is None:
