@@ -1,5 +1,7 @@
+from datetime import date
+
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from app import models, schemas
@@ -22,9 +24,44 @@ def create_bike(bike: schemas.BikeCreate, db: Session = Depends(get_db)):  # noq
 
 
 @router.get("/", response_model=list[schemas.BikeResponse])
-def get_bikes(db:Session=Depends(get_db)):  # noqa: B008
-    bikes = db.execute(select(models.Bikes)).scalars().all()
+def get_bikes(search: str = "", bike_status: bool | None = None,
+    starting_date: date | None = None, ending_date: date | None = None,
+              db:Session=Depends(get_db)):  # noqa: B008
+    query = select(models.Bikes)
+
+    if search:
+        query = query.where(or_(
+            models.Bikes.company.ilike(f"%{search}%"),
+            models.Bikes.model.ilike(f"%{search}%"),
+            models.Bikes.engine_no.ilike(f"%{search}%"),
+            models.Bikes.registration_no.ilike(f"%{search}%"),
+            models.Bikes.chassis_no.ilike(f"%{search}%")
+        ))
+
+    if bike_status is not None:
+        query = query.where(
+            models.Bikes.status.is_(bike_status)
+        )
+
+    if starting_date is not None and ending_date is not None and starting_date > ending_date:
+            raise HTTPException(
+                status_code = status.HTTP_400_BAD_REQUEST,
+                detail = "Starting date cannot be after ending date"
+            )
+
+    if starting_date is not None:
+        query = query.where(
+          func.date(models.Bikes.purchase_date) >= starting_date  
+        )
+    if ending_date is not None:
+        query = query.where(
+            func.date(models.Bikes.purchase_date) <= ending_date
+        )
+
+    bikes = db.execute(query).scalars().all()
+
     return bikes
+
 
 @router.get("/{id_of_bike}", response_model=schemas.BikeResponse)
 def get_bike(id_of_bike: int, db: Session = Depends(get_db)):  # noqa: B008
