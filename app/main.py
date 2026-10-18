@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .routers import auth, bikes
+from .routers import auth, bikes, sales
 
 app = FastAPI()
 
@@ -10,3 +10,4 @@ def root():
 
 app.include_router(bikes.router)
 app.include_router(auth.router)
+app.include_router(sales.router)

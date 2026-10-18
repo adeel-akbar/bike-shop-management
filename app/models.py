@@ -36,5 +36,4 @@ class Sales(Base):
     sale_date: Mapped[datetime] = mapped_column(TIMESTAMP(timezone = True),
                             server_default = func.now(), nullable = False)
     sale_price: Mapped[int] = mapped_column(nullable = False)
-    receipt_no: Mapped[int] = mapped_column(unique = True, nullable = False)
     bike_info: Mapped["Bikes"] = relationship(back_populates = "sale_info")

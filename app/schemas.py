@@ -39,16 +39,23 @@ class BikeUpdate(BaseModel):
     notes: str | None = None
 
 class BikeSale(BaseModel):
+    bike_id: int = Field(gt=0)
     buyer_name: str
     buyer_phone: str | None = None
     buyer_cnic: str | None = None
     sale_date: datetime | None = None
     sale_price: int = Field(gt=0)
 
+class BikeInfoForSale(BaseModel):
+    company: str
+    model: str
+    model_year: int
+    registration_no: str | None = None
+    engine_no: str
+    chassis_no: str
 class BikeSaleResponse(BikeSale):
     id: int
-    bike_id: int
-    receipt_no: int
     sale_date: datetime # type: ignore
+    bike_info: BikeInfoForSale
 
     model_config = ConfigDict(from_attributes = True)
