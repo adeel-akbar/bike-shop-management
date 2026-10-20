@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session, selectinload
 from app import models, schemas
 from app.database import get_db
 from app.oauth2 import get_current_user
+from app.receipt import generate_receipt
 
 router = APIRouter(
     prefix = "/sales",
@@ -58,3 +59,28 @@ def get_one_sale(sale_id: int, db: Session = Depends(get_db)):  # noqa: B008
             detail = f"Sale with id: {sale_id} not found"
         )
     return sale
+
+@router.get("/{sale_id}/receipt")
+def get_sale_receipt(sale_id: int, db: Session = Depends(get_db)):  # noqa: B008
+
+    sale = db.execute(
+        select(models.Sales)
+        .options(selectinload(models.Sales.bike_info))
+        .where(models.Sales.id == sale_id)
+    ).scalar_one_or_none()
+
+    if sale is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Sale with id: {sale_id} not found"
+        )
+
+    pdf_data = generate_receipt(sale)
+
+    return Response(
+        content=pdf_data,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'inline; filename="receipt_{sale.id}.pdf"'
+        }
+    )
