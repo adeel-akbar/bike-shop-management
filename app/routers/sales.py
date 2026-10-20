@@ -84,3 +84,38 @@ def get_sale_receipt(sale_id: int, db: Session = Depends(get_db)):  # noqa: B008
             "Content-Disposition": f'inline; filename="receipt_{sale.id}.pdf"'
         }
     )
+
+@router.patch("/{sale_id}", response_model=schemas.BikeSaleAdminResponse)
+def update_sale(
+    sale_id: int,
+    updated_sale: schemas.BikeSaleUpdate,
+    db: Session = Depends(get_db)  # noqa: B008
+):
+    sale = db.execute(
+        select(models.Sales)
+        .where(models.Sales.id == sale_id)
+    ).scalar_one_or_none()
+
+    if sale is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Sale with id: {sale_id} not found"
+        )
+
+    update_data = updated_sale.model_dump(exclude_unset=True)
+
+    required_fields = {"buyer_name", "sale_date", "sale_price"}
+
+    for field, value in update_data.items():
+        if field in required_fields and value is None:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail=f"{field} cannot be null"
+            )
+
+        setattr(sale, field, value)
+
+    db.commit()
+    db.refresh(sale)
+
+    return sale

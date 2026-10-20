@@ -48,6 +48,13 @@ class BikeSale(BaseModel):
 
     model_config = ConfigDict(from_attributes = True)
 
+class BikeSaleUpdate(BaseModel):
+    buyer_name: str | None = None
+    buyer_phone: str | None = None
+    buyer_cnic: str | None = None
+    sale_date: datetime | None = None
+    sale_price: int | None = Field(default=None, gt=0)
+
 class BikeInfoForSale(BaseModel):
     company: str
     model: str
