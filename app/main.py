@@ -5,7 +5,10 @@ from .routers import auth, bikes, sales, stats
 
 app = FastAPI()
 
-origins = ["http://localhost:3000"]
+origins = [
+    "http://localhost:3000",
+    "https://motodesk.pages.dev",
+]
 
 app.add_middleware(
     CORSMiddleware,
