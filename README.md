@@ -42,6 +42,16 @@ All screenshots use demo data. No real shop records are shown.
 <img src="docs/screenshots/mobile_dashboard.jpg" alt="MotoDesk dashboard on a phone" width="300">
 <!-- markdownlint-enable MD033 -->
 
+## Demo
+
+Watch the [MotoDesk demo on LinkedIn](https://www.linkedin.com/feed/update/urn:li:activity:7521462771964887041/).
+
+The video demonstrates motorcycle inventory management, sales processing,
+and PDF receipt generation using fictional data.
+
+The live application is used privately by a motorcycle shop,
+so public demo credentials are not available.
+
 ## Technology Stack
 
 | Area | Technology |
